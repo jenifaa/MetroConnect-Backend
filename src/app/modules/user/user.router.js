@@ -13,4 +13,4 @@ router.put("/update/:id", userController.updateUser);
 
 router.delete("/delete/:id", userController.deleteUser);
 
-export default router;
+export const userRouter = router;
