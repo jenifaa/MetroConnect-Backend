@@ -1,8 +1,28 @@
-import User from "./user.model";
+import bcryptjs from "bcryptjs";
+import User from "./user.model.js";
+import httpStatus from "http-status-codes";
 
+const createUser = async (payload) => {
+  const { email, password, ...rest } = payload;
+  const isUserExist = await User.findOne({ email });
+  if (isUserExist) {
+    throw new AppError(httpStatus.BAD_REQUEST, "User Already Exist");
+  }
 
-const createUser = async (data) => {
-  return await User.create(data);
+  const hashedPassword = await bcryptjs.hash(password, 10);
+
+  const authProvider = {
+    provider: "credentials",
+    providerId: email,
+  };
+  const user = await User.create({
+    email,
+    password: hashedPassword,
+    auths: [authProvider],
+    ...rest,
+  });
+
+  return user;
 };
 
 const getUsers = async () => {

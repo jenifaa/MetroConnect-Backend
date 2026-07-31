@@ -83,7 +83,7 @@ export const updateUserValidation = [
 
   body("role")
     .optional()
-    .isIn(["SUPER_ADMIN", "ADMIN", "USER", "AGENT"])
+    .isIn(["SUPER_ADMIN", "ADMIN", "USER"])
     .withMessage("Invalid role"),
 
   body("isActive")
