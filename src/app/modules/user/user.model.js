@@ -1,5 +1,36 @@
 import mongoose from "mongoose";
 
+export const Role = {
+  SUPER_ADMIN: "SUPER_ADMIN",
+  ADMIN: "ADMIN",
+  USER: "USER",
+  AGENT: "AGENT",
+};
+
+export const IsActive = {
+  ACTIVE: "ACTIVE",
+  INACTIVE: "INACTIVE",
+  BLOCKED: "BLOCKED",
+};
+
+const authProviderSchema = new mongoose.Schema(
+  {
+    provider: {
+      type: String,
+      enum: ["google", "credentials"],
+      required: true,
+    },
+    providerId: {
+      type: String,
+      required: true,
+    },
+  },
+  {
+    _id: false,
+    versionKey: false,
+  },
+);
+
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -21,13 +52,57 @@ const userSchema = new mongoose.Schema(
 
     password: {
       type: String,
-      required: [true, "Password is required"],
       minlength: 6,
+      default: null,
+    },
+
+    role: {
+      type: String,
+      enum: Object.values(Role),
+      default: Role.USER,
+    },
+
+    phone: {
+      type: String,
+    },
+
+    picture: {
+      type: String,
+    },
+
+    address: {
+      type: String,
+    },
+
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+
+    isActive: {
+      type: String,
+      enum: Object.values(IsActive),
+      default: IsActive.ACTIVE,
+    },
+
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+
+    auths: {
+      type: [authProviderSchema],
+      default: [
+        {
+          provider: "credentials",
+          providerId: "",
+        },
+      ],
     },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const User = mongoose.model("User", userSchema);
