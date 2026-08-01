@@ -2,7 +2,7 @@ import {
   accessTokenCookieOptions,
   clearAuthCookieOptions,
   refreshTokenCookieOptions,
-} from "./cookieOptions";
+} from "./cookieOptions.js";
 
 export const clearAuthCookies = (res) => {
   res.clearCookie("accessToken", clearAuthCookieOptions);

@@ -1,7 +1,7 @@
 import  StatusCodes  from "http-status-codes";
-import { envVars } from "../config/env";
-import User, { IsActive } from "../modules/user/user.model";
-import { generateToken, verifyToken } from "./jwt";
+import { envVars } from "../config/env.js";
+import User, { IsActive } from "../modules/user/user.model.js";
+import { generateToken, verifyToken } from "./jwt.js";
 
 export const createUserToken = (user) => {
   const jwtPayload = {
