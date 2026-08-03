@@ -12,7 +12,6 @@ Stack: Node.js + Express + MongoDB Atlas + Mongoose + JWT + bcrypt + Cloudinary
     config/       (db.ts, cloudinary.ts)
     models/
     routes/
-    controllers/
     middlewares/
     utils/
     app.ts
