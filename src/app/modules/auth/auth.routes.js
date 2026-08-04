@@ -3,6 +3,7 @@ import { authController } from "./auth.controller.js";
 import passport from "passport";
 import { envVars } from "../../config/env.js";
 import { Role } from "../user/user.model.js";
+import { checkAuth } from "../../middlewares/checkAuth.js";
 
 const router = Router();
 

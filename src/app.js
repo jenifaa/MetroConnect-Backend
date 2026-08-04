@@ -6,6 +6,8 @@ import "./app/config/passport.js";
 import router from "./app/routes/index.js";
 import expressSession from "express-session";
 import { envVars } from "./app/config/env.js";
+import notFound from "./app/middlewares/notFound.js";
+import { globalErrorHandler } from "./app/middlewares/globalErrorHandler.js";
 const app = express();
 
 app.use(expressSession({
@@ -33,5 +35,8 @@ app.use("/api", router);
 app.get("/", (req, res) => {
   res.send("Backend is running...");
 });
+
+app.use(notFound);
+app.use(globalErrorHandler);
 
 export default app;

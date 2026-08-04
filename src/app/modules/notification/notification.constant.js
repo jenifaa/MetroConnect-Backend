@@ -1,0 +1,5 @@
+export const NotificationType = {
+  POST_COMMENT: "POST_COMMENT",
+  POST_REACT: "POST_REACT",
+  ANNOUNCEMENT: "ANNOUNCEMENT",
+};

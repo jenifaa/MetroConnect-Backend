@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { userController } from "./user.controller.js";
 import { Role } from "./user.model.js";
+import { checkAuth } from "../../middlewares/checkAuth.js";
 import { validateRequest } from "../../middlewares/validateRequest.js";
 import { updateUserValidation } from "./user.validation.js";
 

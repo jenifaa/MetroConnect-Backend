@@ -4,10 +4,15 @@ import { handleDuplicateError } from "../helpers/handleDuplicateError.js";
 import { handleCastError } from "../helpers/handleCastError.js";
 import { handleZodError } from "../helpers/handleZodError.js";
 import { handleValidationError } from "../helpers/handleValidationError.js";
+import { deleteImageFromCloudinary } from "../config/cloudinary.config.js";
 
 export const globalErrorHandler = async (err, req, res, next) => {
   if (envVars.NODE_ENV === "development") {
     console.log(err);
+  }
+
+  if (req.file) {
+    await deleteImageFromCloudinary(req.file.path);
   }
 
   let errorSources = [];

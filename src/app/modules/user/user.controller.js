@@ -24,6 +24,18 @@ const getUsers = async (req, res) => {
   }
 };
 
+const getMe = async (req, res) => {
+  try {
+    const user = await userServices.getMe(req.user.userId);
+
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({
+      message: err.message,
+    });
+  }
+};
+
 const getUser = async (req, res) => {
   try {
     const user = await userServices.getUser(req.params.id);
@@ -64,6 +76,7 @@ const deleteUser = async (req, res) => {
 
 export const userController = {
   createUser,
+  getMe,
   getUser,
   getUsers,
   updateUser,

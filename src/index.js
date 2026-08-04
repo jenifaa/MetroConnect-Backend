@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import app from "./app.js";
-import { redis } from "./app/config/redis.config.js";
+import { connectRedis } from "./app/config/redis.config.js";
 
 dotenv.config();
 
@@ -13,6 +13,7 @@ const startServer = async () => {
 
     console.log("MongoDB Connected");
 
+    await connectRedis();
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
