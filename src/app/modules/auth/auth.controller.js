@@ -7,7 +7,9 @@ import { sendResponse } from "../../utils/sendResponse.js";
 import httpStatus from "http-status-codes";
 import { AuthServices } from "./auth.services.js";
 import { envVars } from "../../config/env.js";
-
+import User, { IsActive } from "../user/user.model.js";
+import bcryptjs from "bcryptjs"
+import jwt from "jsonwebtoken";
 
 const credentialsLogin = catchAsync(async (req, res, next) => {
   passport.authenticate("local", async (err, user, info) => {
@@ -108,9 +110,85 @@ const logout = catchAsync(
   }
 );
 
+
+const changePassword = catchAsync(
+  async (req, res, next) => {
+    const oldPassword = req.body.oldPassword;
+    const newPassword = req.body.newPassword;
+    const decodedToken = req.user;
+
+    await AuthServices.changePassword(
+      oldPassword,
+      newPassword,
+      decodedToken 
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Password Changed Successfully",
+      data: null,
+    });
+  }
+);
+const setPassword = catchAsync(
+  async (req, res, next) => {
+    const decodedToken = req.user;
+    const { password } = req.body || {};
+    await AuthServices.setPassword(decodedToken.userId, password);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Password Set Successfully",
+      data: null,
+    });
+  }
+);
+// const forgetPassword = catchAsync(
+//   async (req, res, next) => {
+//     const { email } = req.body || {};
+//     await AuthServices.forgetPassword(email);
+
+//     sendResponse(res, {
+//       success: true,
+//       statusCode: httpStatus.OK,
+//       message: "Email Sent Successfully",
+//       data: null,
+//     });
+//   }
+// );
+const resetPassword = catchAsync(
+  async (req, res, next) => {
+ 
+    const decodedToken = req.user;
+
+    await AuthServices.resetPassword(req.body, decodedToken );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Password Reset Successfully",
+      data: null,
+    });
+  }
+);
+
+
+
+
+
+
+
+
+
 export const authController = {
   credentialsLogin,
   getNewAccessToken,
   googleCallbackController,
-  logout
+  logout,
+  changePassword,
+  setPassword,
+  resetPassword,
+  
 };
