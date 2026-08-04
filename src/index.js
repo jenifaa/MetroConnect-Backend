@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import app from "./app.js";
+import { redis } from "./app/config/redis.config.js";
 
 dotenv.config();
 
