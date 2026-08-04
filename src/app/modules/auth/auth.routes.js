@@ -8,7 +8,7 @@ const router = Router();
 router.post("/login", authController.credentialsLogin);
 router.post("/refresh-token",authController.getNewAccessToken);
 
-
+router.post("/logout", authController.logout);
 
 router.get(
   "/google",

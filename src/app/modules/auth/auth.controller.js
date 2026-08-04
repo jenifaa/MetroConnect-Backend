@@ -84,8 +84,33 @@ const googleCallbackController = catchAsync(
   }
 );
 
+
+const logout = catchAsync(
+  async (req, res, next) => {
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "User Logout Successfully",
+      data: null,
+    });
+  }
+);
+
 export const authController = {
   credentialsLogin,
   getNewAccessToken,
-  googleCallbackController
+  googleCallbackController,
+  logout
 };
