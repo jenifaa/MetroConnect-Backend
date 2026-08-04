@@ -13,6 +13,9 @@ const loadEnvVariables = () => {
     "JWT_REFRESH_SECRET",
     "JWT_REFRESH_EXPIRES",
     "EXPRESS_SESSION_SECRET",
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET",
+    "GOOGLE_CALLBACK_URL",
   ];
 
   requiredEnvVariables.forEach((key) => {
@@ -31,6 +34,9 @@ const loadEnvVariables = () => {
     JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
     JWT_REFRESH_EXPIRES: process.env.JWT_REFRESH_EXPIRES,
     EXPRESS_SESSION_SECRET: process.env.EXPRESS_SESSION_SECRET,
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+    GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL,
   };
 };
 

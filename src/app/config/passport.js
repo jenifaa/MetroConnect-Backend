@@ -1,7 +1,14 @@
 import bcrypt from "bcryptjs";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import User from "../modules/user/user.model.js";
+import User, { IsActive, Role } from "../modules/user/user.model.js";
+
+import {
+  Strategy as GoogleStrategy,
+} from "passport-google-oauth20";
+import { envVars } from "./env.js";
+
+
 
 passport.use(
   new LocalStrategy(
@@ -46,6 +53,75 @@ passport.use(
     },
   ),
 );
+
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: envVars.GOOGLE_CLIENT_ID,
+      clientSecret: envVars.GOOGLE_CLIENT_SECRET,
+      callbackURL: envVars.GOOGLE_CALLBACK_URL,
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const email = profile.emails?.[0]?.value;
+
+        if (!email) {
+          return done(null, false, {
+            message: "No email found",
+          });
+        }
+
+        let user = await User.findOne({ email });
+
+        if (user && !user.isVerified) {
+          return done(null, false, {
+            message: "User is not verified",
+          });
+        }
+
+        if (
+          user &&
+          (user.isActive === IsActive.BLOCKED ||
+            user.isActive === IsActive.INACTIVE)
+        ) {
+          return done(null, false, {
+            message: `User is ${user.isActive}`,
+          });
+        }
+
+        if (user && user.isDeleted) {
+          return done(null, false, {
+            message: "User is deleted",
+          });
+        }
+
+        if (!user) {
+          user = await User.create({
+            name: profile.displayName,
+            email,
+            picture: profile.photos?.[0]?.value,
+            role: Role.USER,
+            isVerified: true,
+            auths: [
+              {
+                provider: "google",
+                providerId: profile.id,
+              },
+            ],
+          });
+        }
+
+        return done(null, user);
+      } catch (error) {
+        console.error("Google Strategy Error:", error);
+        return done(error);
+      }
+    }
+  )
+);
+
+
 
 passport.serializeUser((user, done) => {
   done(null, user._id);
