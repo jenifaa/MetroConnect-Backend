@@ -1,7 +1,7 @@
 import bcryptjs from "bcryptjs";
 import StatusCodes from "http-status-codes";
 import User from "../user/user.model.js";
-import { createUserToken } from "../../utils/userTokens.js";
+import { createNewAccessTokenWithRefreshToken, createUserToken } from "../../utils/userTokens.js";
 
 const credentialsLogin = async (payload) => {
   const { email, password } = payload;
@@ -32,6 +32,18 @@ const credentialsLogin = async (payload) => {
   };
 };
 
+
+
+const getNewAccessToken = async (refreshToken) => {
+  const newAccessToken = await createNewAccessTokenWithRefreshToken(
+    refreshToken
+  );
+
+  return {
+    accessToken: newAccessToken,
+  };
+};
 export const AuthServices = {
   credentialsLogin,
+  getNewAccessToken
 };
