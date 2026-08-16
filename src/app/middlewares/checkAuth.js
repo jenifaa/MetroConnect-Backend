@@ -58,12 +58,12 @@ export const checkAuth =
         );
       }
 
-      if (!isUserExist.isVerified) {
-        throw new AppError(
-          httpStatus.BAD_GATEWAY,
-          "User is not verified"
-        );
-      }
+      // if (!isUserExist.isVerified) {
+      //   throw new AppError(
+      //     httpStatus.BAD_GATEWAY,
+      //     "User is not verified"
+      //   );
+      // }
 
       if (!authRoles.includes(verifiedToken.role)) {
         throw new AppError(
