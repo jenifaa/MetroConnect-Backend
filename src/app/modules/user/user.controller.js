@@ -1,3 +1,4 @@
+import { sendResponse } from "../../utils/sendResponse.js";
 import { userServices } from "./user.service.js";
 
 const createUser = async (req, res) => {
@@ -13,15 +14,15 @@ const createUser = async (req, res) => {
 };
 
 const getUsers = async (req, res) => {
-  try {
-    const users = await userServices.getUsers();
+  const result = await userServices.getUsers(req.query);
 
-    res.json(users);
-  } catch (err) {
-    res.status(500).json({
-      message: err.message,
-    });
-  }
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Users retrieved successfully",
+    data: result.data,
+    meta: result.meta,
+  });
 };
 
 const getMe = async (req, res) => {

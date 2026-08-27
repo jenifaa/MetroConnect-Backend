@@ -4,12 +4,12 @@ import { sendResponse } from "../../utils/sendResponse.js";
 import { postServices } from "./post.service.js";
 
 const createPost = catchAsync(async (req, res) => {
-  const imageUrls = (req.files || []).map((file) => file.path);
+  const imageUrl = req.file?.path 
 
   const post = await postServices.createPost(
     req.body,
     req.user.userId,
-    imageUrls,
+    imageUrl,
   );
 
   sendResponse(res, {

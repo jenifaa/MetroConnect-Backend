@@ -28,11 +28,11 @@ const findActivePost = async (postId) => {
   return post;
 };
 
-const createPost = async (payload, authorId, imageUrls = []) => {
+const createPost = async (payload, authorId, imageUrl) => {
   const post = await Post.create({
     ...payload,
     author: authorId,
-    images: imageUrls,
+    image: imageUrl,
   });
 
   const populated = await Post.findById(post._id).populate(postPopulate);

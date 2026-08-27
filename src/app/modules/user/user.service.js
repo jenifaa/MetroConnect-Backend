@@ -27,7 +27,7 @@ const createUser = async (payload) => {
   return user;
 };
 
-const getUsers = async (query) => {
+const getUsers = async (query = {}) => {
   const queryBuilder = new QueryBuilder(User.find(), query);
 
   const usersData = queryBuilder

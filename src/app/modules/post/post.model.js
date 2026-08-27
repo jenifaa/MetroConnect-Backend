@@ -59,9 +59,8 @@ const postSchema = new mongoose.Schema(
       enum: Object.values(PostCategory),
       default: PostCategory.GENERAL,
     },
-    images: {
-      type: [String],
-      default: [],
+    image: {
+      type: String,
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,

@@ -16,7 +16,7 @@ const allRoles = Object.values(Role);
 lostFoundRouter.post(
   "/",
   checkAuth(...allRoles),
-  multerUpload.single("image"),
+  multerUpload.single("file"),
   validateRequest(createLostFoundSchema),
   lostFoundController.createLostFound,
 );

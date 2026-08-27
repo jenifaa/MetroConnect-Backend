@@ -18,14 +18,24 @@ const allRoles = Object.values(Role);
 postRouter.post(
   "/",
   checkAuth(...allRoles),
-  multerUpload.array("images", 5),
+  multerUpload.single("file"),
   validateRequest(createPostSchema),
   postController.createPost,
 );
 
 postRouter.get("/", checkAuth(...allRoles), postController.getPosts);
-postRouter.get("/:authorId", checkAuth(...allRoles), postController.getPostsByAuthorId);
-postRouter.get("/my-posts", checkAuth(...allRoles), postController.getMyPosts);
+
+postRouter.get(
+  "/my-posts",
+  checkAuth(...Object.values(Role)),
+  postController.getMyPosts,
+);
+
+postRouter.get(
+  "/author/:authorId",
+  checkAuth(...Object.values(Role)),
+  postController.getPostsByAuthorId,
+);
 
 postRouter.get("/:id", checkAuth(...allRoles), postController.getPostById);
 
@@ -36,11 +46,7 @@ postRouter.patch(
   postController.updatePost,
 );
 
-postRouter.delete(
-  "/:id",
-  checkAuth(...allRoles),
-  postController.deletePost,
-);
+postRouter.delete("/:id", checkAuth(...allRoles), postController.deletePost);
 
 postRouter.post(
   "/:id/reactions",

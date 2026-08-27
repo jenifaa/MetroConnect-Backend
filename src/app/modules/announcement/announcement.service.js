@@ -21,7 +21,6 @@ const createAnnouncement = async (payload, adminId) => {
   const students = await User.find({
     role: Role.USER,
     isDeleted: false,
-    isVerified: true,
   }).select("_id");
 
   const notifications = students.map((student) => ({
