@@ -181,6 +181,33 @@ const deleteComment = async (postId, commentId, decodedToken) => {
   const populated = await Post.findById(post._id).populate(postPopulate);
   return formatPostForViewer(populated, decodedToken);
 };
+const getPostsByAuthorId = async (authorId, query, viewer) => {
+  const baseQuery = Post.find({
+    author: authorId,
+    isDeleted: false,
+  });
+
+  const queryBuilder = new QueryBuilder(baseQuery, query);
+
+  const postsQuery = queryBuilder
+    .filter()
+    .search(postSearchableFields)
+    .sort()
+    .fields()
+    .paginate()
+    .build()
+    .populate(postPopulate);
+
+  const [posts, meta] = await Promise.all([
+    postsQuery,
+    queryBuilder.getMeta(),
+  ]);
+
+  return {
+    data: formatPostsForViewer(posts, viewer),
+    meta,
+  };
+};
 
 export const postServices = {
   createPost,
@@ -191,4 +218,5 @@ export const postServices = {
   reactToPost,
   addComment,
   deleteComment,
+  getPostsByAuthorId,
 };
