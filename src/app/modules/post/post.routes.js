@@ -24,6 +24,8 @@ postRouter.post(
 );
 
 postRouter.get("/", checkAuth(...allRoles), postController.getPosts);
+postRouter.get("/:authorId", checkAuth(...allRoles), postController.getPostsByAuthorId);
+postRouter.get("/my-posts", checkAuth(...allRoles), postController.getMyPosts);
 
 postRouter.get("/:id", checkAuth(...allRoles), postController.getPostById);
 

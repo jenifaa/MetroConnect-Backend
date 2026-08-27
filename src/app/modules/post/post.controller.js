@@ -114,6 +114,43 @@ const deleteComment = catchAsync(async (req, res) => {
   });
 });
 
+const getPostsByAuthorId = catchAsync(async (req, res) => {
+  const { authorId } = req.params;
+
+  const result = await postServices.getPostsByAuthorId(
+    authorId,
+    req.query,
+    req.user,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Author posts retrieved successfully",
+    meta: result.meta,
+    data: result.data,
+  });
+});
+
+const getMyPosts = catchAsync(async (req, res) => {
+  const result = await postServices.getPostsByAuthorId(
+    req.user.userId,
+    req.query,
+    req.user,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Your posts retrieved successfully",
+    meta: result.meta,
+    data: result.data,
+  });
+});
+
+
+
+
 export const postController = {
   createPost,
   getPosts,
@@ -123,4 +160,6 @@ export const postController = {
   reactToPost,
   addComment,
   deleteComment,
+  getPostsByAuthorId,
+  getMyPosts,
 };
