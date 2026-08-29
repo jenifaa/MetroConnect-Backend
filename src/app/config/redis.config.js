@@ -7,7 +7,12 @@ export const redisClient = new Redis({
   token: envVars.UPSTASH_REDIS_REST_TOKEN,
 });
 
-// No connectRedis needed — Upstash uses HTTP, no persistent connection
 export const connectRedis = async () => {
-  console.log("Upstash Redis ready ✅");
+  try {
+    await redisClient.ping();
+    console.log("Redis Connected");
+  } catch (error) {
+    console.error("Redis connection failed:", error);
+    throw error;
+  }
 };
