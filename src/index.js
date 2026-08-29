@@ -5,36 +5,52 @@ import { connectRedis } from "./app/config/redis.config.js";
 
 dotenv.config();
 
-const PORT = process.env.PORT || 5000;
+let isMongoConnected = false;
+let isRedisConnected = false;
 
-const startServer = async () => {
+const connectDatabase = async () => {
+  if (isMongoConnected) return;
+
+  if (mongoose.connection.readyState === 1) {
+    isMongoConnected = true;
+    return;
+  }
+
+  await mongoose.connect(process.env.DB_URL);
+  isMongoConnected = true;
+
+  console.log("MongoDB Connected");
+};
+
+const initializeServer = async () => {
   try {
-    await mongoose.connect(process.env.DB_URL);
+    await connectDatabase();
 
-    console.log("MongoDB Connected");
-
-    await connectRedis();
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
+    if (!isRedisConnected) {
+      await connectRedis();
+      isRedisConnected = true;
+      console.log("Redis Connected");
+    }
   } catch (error) {
-    console.error("Failed to connect to MongoDB:", error);
-    process.exit(1);
+    console.error("Server initialization failed:", error);
+    throw error;
   }
 };
 
-startServer();
+const handler = async (req, res) => {
+  try {
+    await initializeServer();
 
-process.on("SIGTERM", () => {
-  console.log("SIGTERM received. Shutting down...");
-  process.exit(0);
-});
+    return app(req, res);
+  } catch (error) {
+    console.error("Server Error:", error);
 
-process.on("unhandledRejection", (reason) => {
-  console.error("Unhandled Rejection:", reason);
-});
+    return res.status(500).json({
+      success: false,
+      message: "Server initialization failed",
+      error: error.message,
+    });
+  }
+};
 
-process.on("uncaughtException", (error) => {
-  console.error("Uncaught Exception:", error);
-  process.exit(1);
-});
+export default handler;

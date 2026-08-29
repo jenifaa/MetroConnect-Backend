@@ -10,6 +10,8 @@ import notFound from "./app/middlewares/notFound.js";
 import { globalErrorHandler } from "./app/middlewares/globalErrorHandler.js";
 const app = express();
 
+
+app.set("trust proxy", 1);
 app.use(
   cors({
     origin: [envVars.FRONTEND_URL],
@@ -28,7 +30,7 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.set("trust proxy", 1);
+
 
 // app.use(cors());
 
