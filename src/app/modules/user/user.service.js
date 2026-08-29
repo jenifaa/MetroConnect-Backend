@@ -3,6 +3,7 @@ import User, { Role } from "./user.model.js";
 import httpStatus from "http-status-codes";
 import { QueryBuilder } from "../../utils/QueryBuilder.js";
 import { userSearchableFields } from "./user.constant.js";
+import AppError from "../../errorHelpers/AppError.js";
 
 const createUser = async (payload) => {
   const { email, password, ...rest } = payload;

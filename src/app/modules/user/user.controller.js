@@ -51,7 +51,11 @@ const getUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    const user = await userServices.updateUser(req.params.id, req.body);
+    const user = await userServices.updateUser(
+      req.params.id,
+      req.body,
+      req.user
+    );
 
     res.json(user);
   } catch (err) {
@@ -63,7 +67,10 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
-    await userServices.deleteUser(req.params.id);
+    await userServices.deleteUser(
+      req.params.id,
+      req.user
+    );
 
     res.json({
       message: "Deleted Successfully",

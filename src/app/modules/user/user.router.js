@@ -9,15 +9,27 @@ const userRouter = Router();
 
 userRouter.post("/create", userController.createUser);
 // userRouter.get("/all-users", userController.getUsers);
-userRouter.get("/all-users",  checkAuth(Role.ADMIN, Role.SUPER_ADMIN), userController.getUsers);
+userRouter.get(
+  "/all-users",
+  checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+  userController.getUsers,
+);
 userRouter.get("/me", checkAuth(...Object.values(Role)), userController.getMe);
-userRouter.get("/:id",  checkAuth(Role.ADMIN, Role.SUPER_ADMIN), userController.getUser);
+userRouter.get(
+  "/:id",
+  checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+  userController.getUser,
+);
 userRouter.patch(
   "/:id",
   validateRequest(updateUserValidation),
   checkAuth(...Object.values(Role)),
   userController.updateUser,
-)
-userRouter.delete("/:id", userController.deleteUser);
+);
+userRouter.delete(
+  "/:id",
+  checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+  userController.deleteUser,
+);
 
 export default userRouter;
