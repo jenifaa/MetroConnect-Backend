@@ -6,10 +6,23 @@ import { userSearchableFields } from "./user.constant.js";
 import AppError from "../../errorHelpers/AppError.js";
 
 const createUser = async (payload) => {
-  const { email, password, ...rest } = payload;
+  const { email, password, studentId, ...rest } = payload;
+  console.log(studentId)
   const isUserExist = await User.findOne({ email });
   if (isUserExist) {
     throw new AppError(httpStatus.BAD_REQUEST, "User Already Exist");
+  }
+
+  if (!studentId) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Student ID is required");
+  }
+
+  const isStudentIdExist = await User.findOne({
+    studentId: studentId,
+  });
+
+  if (isStudentIdExist) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Student ID already exists");
   }
 
   const hashedPassword = await bcryptjs.hash(password, 10);
@@ -21,6 +34,7 @@ const createUser = async (payload) => {
   const user = await User.create({
     email,
     password: hashedPassword,
+    studentId:studentId,
     auths: [authProvider],
     ...rest,
   });
@@ -29,7 +43,7 @@ const createUser = async (payload) => {
 };
 
 const getUsers = async (query = {}) => {
-  const queryBuilder = new QueryBuilder(User.find(), query);
+  const queryBuilder = new QueryBuilder(User.find({ isDeleted: false }), query);
 
   const usersData = queryBuilder
     .filter()
@@ -66,9 +80,7 @@ const getUser = async (id) => {
 };
 
 const updateUser = async (userId, payload, decodedToken) => {
-  if (
-    decodedToken.role === Role.USER 
-  ) {
+  if (decodedToken.role === Role.USER) {
     if (userId !== decodedToken.userId) {
       throw new AppError(401, "You are not authorized");
     }
@@ -88,39 +100,24 @@ const updateUser = async (userId, payload, decodedToken) => {
   }
 
   if (payload.role) {
-    if (
-      decodedToken.role === Role.USER
-    ) {
-      throw new AppError(httpStatus.FORBIDDEN, "You are not authorized");
-    }
-
-
-  }
-
-  if (
-    payload.isActive ||
-    payload.isDeleted ||
-    payload.isVerified
-  ) {
-    if (
-      decodedToken.role === Role.USER
-    ) {
+    if (decodedToken.role === Role.USER) {
       throw new AppError(httpStatus.FORBIDDEN, "You are not authorized");
     }
   }
 
-  const newUpdatedUser = await User.findByIdAndUpdate(
-    userId,
-    payload,
-    {
-      new: true,
-      runValidators: true,
+  if (payload.isActive || payload.isDeleted || payload.isVerified) {
+    if (decodedToken.role === Role.USER) {
+      throw new AppError(httpStatus.FORBIDDEN, "You are not authorized");
     }
-  );
+  }
+
+  const newUpdatedUser = await User.findByIdAndUpdate(userId, payload, {
+    new: true,
+    runValidators: true,
+  });
 
   return newUpdatedUser;
 };
-
 
 const deleteUser = async (userId, decodedToken) => {
   const user = await User.findById(userId);
@@ -129,10 +126,7 @@ const deleteUser = async (userId, decodedToken) => {
     throw new AppError(httpStatus.NOT_FOUND, "User not found");
   }
 
-  if (
-    decodedToken.role === Role.ADMIN &&
-    user.role === Role.SUPER_ADMIN
-  ) {
+  if (decodedToken.role === Role.ADMIN && user.role === Role.SUPER_ADMIN) {
     throw new AppError(httpStatus.FORBIDDEN, "You are not authorized");
   }
 
@@ -142,13 +136,11 @@ const deleteUser = async (userId, decodedToken) => {
     {
       new: true,
       runValidators: true,
-    }
+    },
   );
 
   return deletedUser;
 };
-
-
 
 export const userServices = {
   createUser,

@@ -54,6 +54,10 @@ const userSchema = new mongoose.Schema(
       minlength: 6,
       default: null,
     },
+    studentId: {
+      type: String,
+      match: [/^\d{9}$/, "Student ID must be exactly 9 digits"],
+    },
 
     role: {
       type: String,
@@ -101,6 +105,15 @@ const userSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+  },
+);
+userSchema.index(
+  { studentId: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      studentId: { $type: "string" },
+    },
   },
 );
 

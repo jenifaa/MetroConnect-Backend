@@ -3,12 +3,8 @@ import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import User, { IsActive, Role } from "../modules/user/user.model.js";
 
-import {
-  Strategy as GoogleStrategy,
-} from "passport-google-oauth20";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { envVars } from "./env.js";
-
-
 
 passport.use(
   new LocalStrategy(
@@ -53,7 +49,6 @@ passport.use(
     },
   ),
 );
-
 
 passport.use(
   new GoogleStrategy(
@@ -117,11 +112,9 @@ passport.use(
         console.error("Google Strategy Error:", error);
         return done(error);
       }
-    }
-  )
+    },
+  ),
 );
-
-
 
 passport.serializeUser((user, done) => {
   done(null, user._id);

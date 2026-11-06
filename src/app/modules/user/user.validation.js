@@ -20,20 +20,19 @@ export const createUserValidation = [
     .isLength({ min: 6 })
     .withMessage("Password must be at least 6 characters"),
 
-  body("phone")
+  body("studentId")
     .optional()
-    .isString()
-    .withMessage("Phone must be a string"),
+    .trim()
+    .isLength({ min: 9, max: 9 })
+    .withMessage("Student ID must be exactly 9 digits")
+    .matches(/^\d{9}$/)
+    .withMessage("Student ID must contain only numbers"),
 
-  body("picture")
-    .optional()
-    .isURL()
-    .withMessage("Picture must be a valid URL"),
+  body("phone").optional().isString().withMessage("Phone must be a string"),
 
-  body("address")
-    .optional()
-    .isString()
-    .withMessage("Address must be a string"),
+  body("picture").optional().isURL().withMessage("Picture must be a valid URL"),
+
+  body("address").optional().isString().withMessage("Address must be a string"),
 
   body("role")
     .optional()
@@ -45,8 +44,6 @@ export const createUserValidation = [
     .isIn(["ACTIVE", "INACTIVE", "BLOCKED"])
     .withMessage("Invalid account status"),
 ];
-
-
 
 export const updateUserValidation = [
   body("name")
@@ -71,15 +68,20 @@ export const updateUserValidation = [
     .isString()
     .withMessage("Phone must be a valid string"),
 
-  body("picture")
-    .optional()
-    .isURL()
-    .withMessage("Picture must be a valid URL"),
+  body("picture").optional().isURL().withMessage("Picture must be a valid URL"),
 
   body("address")
     .optional()
     .isString()
     .withMessage("Address must be a valid string"),
+
+  body("studentId")
+    .optional()
+    .trim()
+    .isLength({ min: 9, max: 9 })
+    .withMessage("Student ID must be exactly 9 digits")
+    .matches(/^\d{9}$/)
+    .withMessage("Student ID must contain only numbers"),
 
   body("role")
     .optional()
