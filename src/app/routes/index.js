@@ -6,6 +6,7 @@ import complainRouter from "../modules/complains/complain.routes.js";
 import announcementRouter from "../modules/announcement/announcement.routes.js";
 import notificationRouter from "../modules/notification/notification.routes.js";
 import lostFoundRouter from "../modules/lostFound/lostFound.routes.js";
+import qnaRouter from "../modules/QnA/qNa.route.js";
 
 const router = Router();
 
@@ -38,6 +39,10 @@ const moduleRoutes = [
     path: "/lost-found",
     route: lostFoundRouter,
   },
+  {
+    path: "/qna",
+    route: qnaRouter,
+  }
 ];
 
 moduleRoutes.forEach((route) => {

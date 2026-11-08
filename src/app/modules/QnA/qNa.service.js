@@ -51,7 +51,7 @@ const buildList = async (baseFilter, query) => {
  
 const createQuestion = async (payload, userId) => {
   const { title, description, category, tags } = payload;
- 
+
   const question = await Question.create({
     title,
     description,
@@ -59,10 +59,11 @@ const createQuestion = async (payload, userId) => {
     tags,
     author: userId,
   });
- 
-  return Question.findById(question._id)
-    .select("-comments")
-    .populate(authorPopulate);
+
+  return Question.findById(question._id).populate([
+    authorPopulate,
+    commentAuthorPopulate,
+  ]);
 };
  
 // public
