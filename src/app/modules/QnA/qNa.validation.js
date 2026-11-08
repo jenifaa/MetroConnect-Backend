@@ -1,47 +1,39 @@
-import { Schema, model } from "mongoose";
+import { z } from "zod";
+import { QnaCategory } from "./qNa.model.js";
 
-export const QnaCategory = {
-  ACADEMIC: "ACADEMIC",
-  CAMPUS_LIFE: "CAMPUS_LIFE",
-  CAREER: "CAREER",
-  TECHNICAL: "TECHNICAL",
-  OTHER: "OTHER",
-};
+const tagsSchema = z
+  .array(z.string().trim().toLowerCase().min(1).max(30))
+  .max(5);
 
-const commentSchema = new Schema(
-  {
-    author: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    content: { type: String, required: true, trim: true, maxlength: 1000 },
-  },
-  { timestamps: true },
-);
+export const createQuestionSchema = z
+  .object({
+    title: z.string().trim().min(5).max(200),
+    description: z.string().trim().min(15).max(5000),
+    category: z.enum(Object.values(QnaCategory)).optional(),
+    tags: tagsSchema.optional(),
+  })
+  .strict();
 
-const questionSchema = new Schema(
-  {
-    title: { type: String, required: true, trim: true, maxlength: 200 },
-    description: { type: String, required: true, trim: true, maxlength: 5000 },
-    category: {
-      type: String,
-      enum: Object.values(QnaCategory),
-      default: QnaCategory.OTHER,
-    },
-    tags: { type: [String], default: [] },
-    author: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-      index: true,
-    },
-    isSolved: { type: Boolean, default: false, index: true },
-    solvedAt: { type: Date, default: null },
-    comments: { type: [commentSchema], default: [] },
-    commentsCount: { type: Number, default: 0 },
-    isDeleted: { type: Boolean, default: false },
-  },
-  { timestamps: true, versionKey: false },
-);
+export const updateQuestionSchema = z
+  .object({
+    title: z.string().trim().min(5).max(200).optional(),
+    description: z.string().trim().min(15).max(5000).optional(),
+    category: z.enum(Object.values(QnaCategory)).optional(),
+    tags: tagsSchema.optional(),
+  })
+  .strict()
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "At least one field is required to update",
+  });
 
-questionSchema.index({ createdAt: -1 });
+export const solvedSchema = z
+  .object({
+    isSolved: z.boolean(),
+  })
+  .strict();
 
-const Question = model("Question", questionSchema);
-export default Question;
+export const addCommentSchema = z
+  .object({
+    content: z.string().trim().min(1).max(1000),
+  })
+  .strict();
