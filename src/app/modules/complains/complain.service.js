@@ -7,6 +7,7 @@ import {
   formatComplainForViewer,
   formatComplaintsForViewer,
 } from "./complain.helpers.js";
+import { generateAnonymousToken } from "../../utils/anonymousToken.js";
 
 const isComplaintManager = (role) =>
   role === Role.ADMIN || role === Role.SUPER_ADMIN;
@@ -18,6 +19,8 @@ const complainPopulate = {
 
 const submitComplain = async (payload, userId) => {
   const { submittedBy, anonymousToken, ...safePayload } = payload;
+
+  const data = { ...safePayload };
 
   if (safePayload.isAnonymous) {
     data.submittedBy = undefined;
