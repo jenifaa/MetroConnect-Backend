@@ -4,9 +4,7 @@ dotenv.config();
 
 const loadEnvVariables = () => {
   const requiredEnvVariables = [
-    "PORT",
     "DB_URL",
-    "NODE_ENV",
     "BCRYPT_SALT_ROUND",
     "JWT_ACCESS_EXPIRES",
     "JWT_ACCESS_SECRET",
@@ -31,9 +29,9 @@ const loadEnvVariables = () => {
   });
 
   return {
-    PORT: process.env.PORT,
+    PORT: process.env.PORT || 5000,
     DB_URL: process.env.DB_URL,
-    NODE_ENV: process.env.NODE_ENV,
+    NODE_ENV: process.env.NODE_ENV || "production",
     BCRYPT_SALT_ROUND: process.env.BCRYPT_SALT_ROUND,
     JWT_ACCESS_EXPIRES: process.env.JWT_ACCESS_EXPIRES,
     JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET,

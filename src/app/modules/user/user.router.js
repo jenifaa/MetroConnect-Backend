@@ -2,8 +2,12 @@ import { Router } from "express";
 import { userController } from "./user.controller.js";
 import { Role } from "./user.model.js";
 import { checkAuth } from "../../middlewares/checkAuth.js";
+
+import {
+ 
+  updateUserValidation,
+} from "./user.validation.js";
 import { validateRequest } from "../../middlewares/validateRequest.js";
-import { updateUserValidation } from "./user.validation.js";
 
 const userRouter = Router();
 
@@ -31,5 +35,7 @@ userRouter.delete(
   checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
   userController.deleteUser,
 );
+
+
 
 export default userRouter;

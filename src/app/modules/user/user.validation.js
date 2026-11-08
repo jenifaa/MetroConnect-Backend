@@ -99,6 +99,11 @@ export const updateUserValidation = [
     .withMessage("isVerified must be true or false"),
 ];
 
+
+
+
+
+
 export const validate = (req, res, next) => {
   const errors = validationResult(req);
 

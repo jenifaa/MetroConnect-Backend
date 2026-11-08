@@ -28,11 +28,18 @@ const complainSchema = new mongoose.Schema(
     submittedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: function () {
+        return !this.isAnonymous;
+      },
     },
     isAnonymous: {
       type: Boolean,
       default: false,
+    },
+    anonymousToken: {
+      type: String,
+      select: false, 
+      index: true,
     },
     adminResponse: {
       type: String,

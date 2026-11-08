@@ -17,31 +17,43 @@ const complainPopulate = {
 };
 
 const submitComplain = async (payload, userId) => {
-  const complaint = await Complain.create({
-    ...payload,
-    submittedBy: userId,
-  });
+  const { submittedBy, anonymousToken, ...safePayload } = payload;
+
+  if (safePayload.isAnonymous) {
+    data.submittedBy = undefined;
+    data.anonymousToken = generateAnonymousToken(userId);
+  } else {
+    data.submittedBy = userId;
+  }
+
+  const complaint = await Complain.create(data);
 
   const populated = await Complain.findById(complaint._id).populate(
     complainPopulate,
   );
 
-  return formatComplainForViewer(populated, {
-    userId,
-    role: Role.USER,
-  });
+  return formatComplainForViewer(populated, { userId, role: Role.USER });
 };
+
+const ownerFilter = (userId) => ({
+  $or: [
+    { submittedBy: userId },
+    { anonymousToken: generateAnonymousToken(userId) },
+  ],
+});
 
 const getMyComplaints = async (userId, query) => {
   const baseQuery = Complain.find({
-    submittedBy: userId,
+    ...ownerFilter(userId),
     isDeleted: false,
   });
 
   const queryBuilder = new QueryBuilder(baseQuery, query);
-  const complaintsQuery = queryBuilder.sort().paginate().build().populate(
-    complainPopulate,
-  );
+  const complaintsQuery = queryBuilder
+    .sort()
+    .paginate()
+    .build()
+    .populate(complainPopulate);
 
   const [complaints, meta] = await Promise.all([
     complaintsQuery,
@@ -61,7 +73,7 @@ const getComplaintByIdForStudent = async (complaintId, viewer) => {
   const complaint = await Complain.findOne({
     _id: complaintId,
     isDeleted: false,
-    submittedBy: viewer.userId,
+    ...ownerFilter(viewer.userId),
   }).populate(complainPopulate);
 
   if (!complaint) {

@@ -105,6 +105,21 @@ passport.use(
               },
             ],
           });
+        } else {
+          const isGoogleLinked = user.auths?.some(
+            (provider) =>
+              provider.provider === "google" &&
+              provider.providerId === profile.id,
+          );
+
+          if (!isGoogleLinked) {
+            user.auths.push({
+              provider: "google",
+              providerId: profile.id,
+            });
+
+            await user.save();
+          }
         }
 
         return done(null, user);

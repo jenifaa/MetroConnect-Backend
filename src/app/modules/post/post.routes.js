@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { Role } from "../user/user.model.js";
 import { checkAuth } from "../../middlewares/checkAuth.js";
-import { validateRequest } from "../../middlewares/validateRequest.js";
+
 import { multerUpload } from "../../config/multer.config.js";
 import { postController } from "./post.controller.js";
 import {
@@ -10,6 +10,7 @@ import {
   reactPostSchema,
   updatePostSchema,
 } from "./post.validation.js";
+import { validateRequest } from "../../middlewares/validateRequest.js";
 
 const postRouter = Router();
 

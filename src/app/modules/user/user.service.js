@@ -7,7 +7,7 @@ import AppError from "../../errorHelpers/AppError.js";
 
 const createUser = async (payload) => {
   const { email, password, studentId, ...rest } = payload;
-  console.log(studentId)
+  console.log(studentId);
   const isUserExist = await User.findOne({ email });
   if (isUserExist) {
     throw new AppError(httpStatus.BAD_REQUEST, "User Already Exist");
@@ -34,7 +34,7 @@ const createUser = async (payload) => {
   const user = await User.create({
     email,
     password: hashedPassword,
-    studentId:studentId,
+    studentId: studentId,
     auths: [authProvider],
     ...rest,
   });
@@ -97,6 +97,26 @@ const updateUser = async (userId, payload, decodedToken) => {
     ifUserExist.role === Role.SUPER_ADMIN
   ) {
     throw new AppError(httpStatus.FORBIDDEN, "You are not authorized");
+  }
+
+  // Student ID update
+  if (payload.studentId !== undefined) {
+    const studentId = payload.studentId.trim().toUpperCase();
+
+    if (ifUserExist.studentId) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "Student ID is already registered",
+      );
+    }
+
+    const isStudentIdExist = await User.findOne({ studentId });
+
+    if (isStudentIdExist) {
+      throw new AppError(httpStatus.CONFLICT, "Student ID already exists");
+    }
+
+    payload.studentId = studentId;
   }
 
   if (payload.role) {
